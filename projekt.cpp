@@ -4,6 +4,7 @@
 #include <mutex>
 #include <queue>
 #include <cstdlib>
+#include <ncurses.h>
 
 std::queue <int> kolejka1;
 std::mutex kolejka1Guard;
@@ -18,6 +19,7 @@ void producent()
 	srand(time(NULL));
 	for (int i = 0; i < wym; i++)
 	{
+		std::this_thread::sleep_for(std::chrono::seconds(1)); 
 		kolejka1Guard.lock();
 		kolejka2Guard.lock();
 
@@ -47,7 +49,8 @@ void przetwarzacz()
 	}*/
 
 	for (int i = 0; i < wym; i++)
-	{
+	{	
+		std::this_thread::sleep_for(std::chrono::seconds(1)); 
 		kolejka2Guard.lock();
 		kolejka1Guard.lock();
 
@@ -69,16 +72,35 @@ void przetwarzacz()
 	}	
 }
 
+void curses(){
+	for (int i = 0; i < wym; i++)
+	{
+		std::this_thread::sleep_for(std::chrono::seconds(1)); // sleep(2);
+		std::cout << "curses" << std::endl;
+	}
+}
+
+
 int main()
 {
 	std::cout << "Podaj wymiar macierzy kwadratowej: " << std::endl;
   	std::cin >> wym;
 	
 	auto producentThread = std::thread(producent); 
-	auto przetwarzaczThread = std::thread(przetwarzacz); 
+	auto przetwarzaczThread = std::thread(przetwarzacz);
+	auto cursesThread = std::thread(curses); 
 
 	producentThread.join(); 
 	przetwarzaczThread.join();
+	cursesThread.join();
+
+	/*std::vector<std::thread> threads;
+
+	  for (int i = 0; i < wym; i++)
+	    	threads.push_back(std::thread(producent)); 
+
+	  for (auto& thread : threads) 
+		thread.join(); */
 
 	std::cout << "main done" << std::endl;
 
