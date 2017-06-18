@@ -5,6 +5,7 @@
 #include <queue>
 #include <cstdlib>
 #include <ncurses.h>
+#include <string>
 
 std::queue <int> kolejka1;
 std::mutex kolejka1Guard;
@@ -16,6 +17,8 @@ int wym = 0;
 
 int tab[100][100];
 std::mutex tabGuard;
+
+std::mutex cursesGuard;
 
 void producent()
 {
@@ -56,13 +59,6 @@ void przetwarzacz()
 		kolejka1.pop();
 		kolejka2.pop();
 
-		/*for( int x = 0 ; x < wym ; x++ )
-		{
-			for( int y = 0 ; y < wym ; y++ )
-		      		std::cout << tab[x][y] << "  ";
-		    		std::cout << std::endl;
-		}*/
-
 		std::cout << "przetwarzacz" << std::endl;
 		
 		kolejka1Guard.unlock();
@@ -71,24 +67,20 @@ void przetwarzacz()
 }
 
 void curses(){
-	for (int i = 0; i < wym; i++)
+	initscr();
+	std::this_thread::sleep_for(std::chrono::seconds(1)); 
+	for( int x = 0 ; x < wym ; x++ )
 	{
-		std::this_thread::sleep_for(std::chrono::seconds(1)); // sleep(2);
-		std::cout << "curses" << std::endl;
+		for( int y = 0 ; y < wym ; y++ )
+		      	printw("%i", tab[x][y]);
+			refresh();
+			endwin();
+		    	//std::cout << std::endl;
 	}
-}
-
-void testCurses(){
-	initscr();			
-	printw("Hello World !!!");	
-	refresh();		
-	getch();			
-	endwin();			
 }
 
 int main()
 {
-	testCurses();
 	std::cout << "Podaj wymiar macierzy kwadratowej: " << std::endl;
   	std::cin >> wym;
 	
