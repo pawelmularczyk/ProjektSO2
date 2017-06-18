@@ -14,6 +14,9 @@ std::mutex kolejka2Guard;
 
 int wym = 0;
 
+int tab[100][100];
+std::mutex tabGuard;
+
 void producent()
 {
 	srand(time(NULL));
@@ -38,18 +41,13 @@ void producent()
 
 void przetwarzacz()
 {	
-	int tab[wym][wym];
-
-  	/*for( int x = 0 ; x < wym ; x++ )
-	{
-    		for( int y = 0 ; y < wym ; y++ )
-		{
-      			tab[kolejka1.front()][kolejka2.front()] = 1;
-		}
-	}*/
-
 	for (int i = 0; i < wym; i++)
 	{	
+		if(kolejka2.empty())
+		{
+			continue;
+			producent();
+		}
 		std::this_thread::sleep_for(std::chrono::seconds(1)); 
 		kolejka2Guard.lock();
 		kolejka1Guard.lock();
@@ -80,9 +78,17 @@ void curses(){
 	}
 }
 
+void testCurses(){
+	initscr();			
+	printw("Hello World !!!");	
+	refresh();		
+	getch();			
+	endwin();			
+}
 
 int main()
 {
+	testCurses();
 	std::cout << "Podaj wymiar macierzy kwadratowej: " << std::endl;
   	std::cin >> wym;
 	
@@ -94,15 +100,8 @@ int main()
 	przetwarzaczThread.join();
 	cursesThread.join();
 
-	/*std::vector<std::thread> threads;
-
-	  for (int i = 0; i < wym; i++)
-	    	threads.push_back(std::thread(producent)); 
-
-	  for (auto& thread : threads) 
-		thread.join(); */
-
 	std::cout << "main done" << std::endl;
 
 	return 0;
 }
+
