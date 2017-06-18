@@ -73,19 +73,21 @@ void przetwarzacz()
 void curses(){
 
 	while(true)
-	{
+	{	
+		//initscr();
 		std::this_thread::sleep_for(std::chrono::seconds(1)); 
-		std::cout << "curses" << std::endl;
 		
 		for( int x = 0 ; x < wym ; x++ )
 		{
 			for( int y = 0 ; y < wym ; y++ )
-			{
+			{	
+				//printw("%i", tab[x][y]);
 				std::cout << tab[x][y] << "  ";
-		    		std::cout << std::endl;
+		    		//std::cout << std::endl;
 			}
 		}
-
+		//endwin();
+		std::cout << std::endl;
 	}
 
 	//initscr();
