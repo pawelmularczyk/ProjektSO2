@@ -23,11 +23,12 @@ std::mutex cursesGuard;
 void producent()
 {
 	srand(time(NULL));
-	for (int i = 0; i < wym; i++)
+	while(true)
 	{
 		std::this_thread::sleep_for(std::chrono::seconds(1)); 
 		kolejka1Guard.lock();
 		kolejka2Guard.lock();
+		cursesGuard.lock();
 
 		int liczba1 =(std::rand() % wym) + 0;
 		kolejka1.push(liczba1);
@@ -37,6 +38,7 @@ void producent()
 
 		std::cout << "producent" << std::endl;
 		
+		cursesGuard.unlock();	
 		kolejka2Guard.unlock();
 		kolejka1Guard.unlock();
 	}	
@@ -44,15 +46,16 @@ void producent()
 
 void przetwarzacz()
 {	
-	for (int i = 0; i < wym; i++)
+	while(true)
 	{	
-		if(kolejka2.empty())
+		/*if(kolejka2.empty())
 		{
 			continue;
 			producent();
-		}
+		}*/
 		std::this_thread::sleep_for(std::chrono::seconds(1)); 
 		kolejka2Guard.lock();
+		cursesGuard.lock();
 		kolejka1Guard.lock();
 
 		tab[kolejka1.front()][kolejka2.front()] = 1;
@@ -62,21 +65,51 @@ void przetwarzacz()
 		std::cout << "przetwarzacz" << std::endl;
 		
 		kolejka1Guard.unlock();
+		cursesGuard.unlock();
 		kolejka2Guard.unlock();
 	}	
 }
 
 void curses(){
-	initscr();
-	std::this_thread::sleep_for(std::chrono::seconds(1)); 
+
+	while(true)
+	{
+		std::this_thread::sleep_for(std::chrono::seconds(1)); 
+		std::cout << "curses" << std::endl;
+		
+		for( int x = 0 ; x < wym ; x++ )
+		{
+			for( int y = 0 ; y < wym ; y++ )
+			{
+				std::cout << tab[x][y] << "  ";
+		    		std::cout << std::endl;
+			}
+		}
+
+	}
+
+	//initscr();
+	/*std::this_thread::sleep_for(std::chrono::seconds(1)); 
+	cursesGuard.lock();
+	kolejka2Guard.lock();
+	kolejka1Guard.lock();
+		
 	for( int x = 0 ; x < wym ; x++ )
 	{
+
 		for( int y = 0 ; y < wym ; y++ )
-		      	printw("%i", tab[x][y]);
-			refresh();
-			endwin();
-		    	//std::cout << std::endl;
+		{
+		      	//printw("%i", tab[x][y]);
+			std::cout << tab[x][y];
+			//refresh();
+		    	std::cout << std::endl;
+		}
 	}
+	//endwin();
+	
+	kolejka1Guard.unlock();
+	kolejka2Guard.unlock();
+	cursesGuard.unlock();*/
 }
 
 int main()
