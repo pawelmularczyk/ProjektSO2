@@ -87,7 +87,7 @@ void curses()
 		kolejka2Guard.lock();
 		kolejka1Guard.lock();*/
 
-		initscr();
+		//initscr();
 		std::this_thread::sleep_for(std::chrono::seconds(1)); 
 		
 		for( int x = 0; x < wym; x++ )
@@ -95,16 +95,17 @@ void curses()
 			for( int y = 0; y < wym; y++ )
 			{	
 				//printw("%i", tab[x][y]);
-				mvaddch(x,y,tab[x][y]);
-				//std::cout << tab[x][y] << "  ";
+				//mvaddch(x,y,tab[x][y]);
+				std::cout << tab[x][y] << "  ";
 		    		//std::cout << std::endl;
 			
 			}
+			std::cout << std::endl;
 		}
-		refresh();
-		getch();
-		endwin();
-		std::cout << std::endl;
+		//refresh();
+		//getch();
+		//endwin();
+		//std::cout << std::endl;
 		
 		/*kolejka1Guard.unlock();
 		kolejka2Guard.unlock();
