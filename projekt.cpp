@@ -5,7 +5,7 @@
 #include <queue>
 #include <cstdlib>
 #include <ncurses.h>
-#include <string>
+#include <string.h>
 
 std::queue <int> kolejka1;
 std::mutex kolejka1Guard;
@@ -57,8 +57,17 @@ void przetwarzacz()
 		kolejka2Guard.lock();
 		cursesGuard.lock();
 		kolejka1Guard.lock();
+		
+		if(tab[kolejka1.front()][kolejka2.front()] == 1)
+		{
+			tab[kolejka1.front()][kolejka2.front()+1] = 1;
+		}
+		else 
+		{
+			tab[kolejka1.front()][kolejka2.front()] = 1;
+		}
 
-		tab[kolejka1.front()][kolejka2.front()] = 1;
+		//tab[kolejka1.front()][kolejka2.front()] = 1;
 		kolejka1.pop();
 		kolejka2.pop();
 
@@ -70,48 +79,37 @@ void przetwarzacz()
 	}	
 }
 
-void curses(){
-
+void curses()
+{
 	while(true)
 	{	
-		//initscr();
+		/*cursesGuard.lock();
+		kolejka2Guard.lock();
+		kolejka1Guard.lock();*/
+
+		initscr();
 		std::this_thread::sleep_for(std::chrono::seconds(1)); 
 		
-		for( int x = 0 ; x < wym ; x++ )
+		for( int x = 0; x < wym; x++ )
 		{
-			for( int y = 0 ; y < wym ; y++ )
+			for( int y = 0; y < wym; y++ )
 			{	
 				//printw("%i", tab[x][y]);
-				std::cout << tab[x][y] << "  ";
+				mvaddch(x,y,tab[x][y]);
+				//std::cout << tab[x][y] << "  ";
 		    		//std::cout << std::endl;
+			
 			}
 		}
-		//endwin();
+		refresh();
+		getch();
+		endwin();
 		std::cout << std::endl;
-	}
-
-	//initscr();
-	/*std::this_thread::sleep_for(std::chrono::seconds(1)); 
-	cursesGuard.lock();
-	kolejka2Guard.lock();
-	kolejka1Guard.lock();
 		
-	for( int x = 0 ; x < wym ; x++ )
-	{
-
-		for( int y = 0 ; y < wym ; y++ )
-		{
-		      	//printw("%i", tab[x][y]);
-			std::cout << tab[x][y];
-			//refresh();
-		    	std::cout << std::endl;
-		}
+		/*kolejka1Guard.unlock();
+		kolejka2Guard.unlock();
+		cursesGuard.unlock();*/
 	}
-	//endwin();
-	
-	kolejka1Guard.unlock();
-	kolejka2Guard.unlock();
-	cursesGuard.unlock();*/
 }
 
 int main()
