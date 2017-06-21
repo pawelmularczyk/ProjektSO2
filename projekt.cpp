@@ -48,34 +48,36 @@ void przetwarzacz()
 {	
 	while(true)
 	{	
-		/*if(kolejka2.empty())
+		if(kolejka2.empty() && kolejka1.empty())
 		{
 			continue;
-			producent();
-		}*/
-		std::this_thread::sleep_for(std::chrono::seconds(1)); 
-		kolejka2Guard.lock();
-		cursesGuard.lock();
-		kolejka1Guard.lock();
-		
-		if(tab[kolejka1.front()][kolejka2.front()] == 1)
-		{
-			tab[kolejka1.front()][kolejka2.front()+1] = 1;
 		}
 		else 
 		{
-			tab[kolejka1.front()][kolejka2.front()] = 1;
-		}
-
-		//tab[kolejka1.front()][kolejka2.front()] = 1;
-		kolejka1.pop();
-		kolejka2.pop();
-
-		std::cout << "przetwarzacz" << std::endl;
+			std::this_thread::sleep_for(std::chrono::seconds(1)); 
+			kolejka2Guard.lock();
+			cursesGuard.lock();
+			kolejka1Guard.lock();
 		
-		kolejka1Guard.unlock();
-		cursesGuard.unlock();
-		kolejka2Guard.unlock();
+			if(tab[kolejka1.front()][kolejka2.front()] == 1)
+			{
+				tab[kolejka1.front()][kolejka2.front()+1] = 1;
+			}
+			else 
+			{
+				tab[kolejka1.front()][kolejka2.front()] = 1;
+			}
+
+			//tab[kolejka1.front()][kolejka2.front()] = 1;
+			kolejka1.pop();
+			kolejka2.pop();
+
+			std::cout << "przetwarzacz" << std::endl;
+		
+			kolejka1Guard.unlock();
+			cursesGuard.unlock();
+			kolejka2Guard.unlock();
+		}
 	}	
 }
 
